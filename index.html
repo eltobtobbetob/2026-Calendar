@@ -10,76 +10,38 @@
 <title>2026 Day Tracker</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body {
-    background: #080808;
-    color: #fff;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    min-height: 100vh;
-    padding: 40px 16px 80px;
-  }
+  body { background: #080808; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; min-height: 100vh; padding: 40px 16px 80px; }
   #app { max-width: 660px; margin: 0 auto; }
-
-  /* Header */
   .header { text-align: center; margin-bottom: 48px; }
   .title { font-size: clamp(52px, 15vw, 72px); font-weight: 800; letter-spacing: -4px; line-height: 1; color: #fff; }
   .subtitle { font-size: 11px; font-weight: 600; color: #444; letter-spacing: 4px; text-transform: uppercase; margin-top: 6px; }
-
-  /* Legend */
   .legend { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 24px; }
-  .legend-pill {
-    border-radius: 100px; padding: 5px 14px;
-    font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-    background: #161616;
-  }
-
-  /* Progress */
+  .legend-pill { border-radius: 100px; padding: 5px 14px; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; background: #161616; }
   .progress-wrap { margin-top: 28px; }
   .progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: #444; font-weight: 600; margin-bottom: 6px; }
   .progress-track { background: #161616; border-radius: 100px; height: 6px; overflow: hidden; border: 1px solid #222; }
   .progress-bar { height: 100%; border-radius: 100px; background: linear-gradient(90deg, #8b00ff, #00bfff); box-shadow: 0 0 12px #8b00ff66; transition: width 0.4s ease; }
-
-  /* Stats */
   .stats-row { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-bottom: 40px; }
-  .stat-box {
-    border-radius: 16px; padding: 18px 0;
-    text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: #111;
-  }
+  .stat-box { border-radius: 16px; padding: 18px 0; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #111; }
   .stat-num { font-size: 32px; font-weight: 800; line-height: 1; }
   .stat-lbl { font-size: 8px; font-weight: 700; color: #444; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 8px; }
-
-  /* Dot map */
   .dot-map { display: flex; gap: 3px; flex-wrap: wrap; margin-bottom: 48px; }
   .dot-map-dot { width: 8px; height: 8px; border-radius: 3px; transition: all 0.2s; }
-
-  /* Month */
   .month-block { margin-bottom: 52px; }
   .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .month-name { font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
   .month-count { font-size: 11px; font-weight: 700; color: #333; }
   .month-count span { color: #fff; }
-
-  /* Week */
   .week-block { margin-bottom: 8px; border-radius: 16px; overflow: hidden; border: 1px solid #1a1a1a; }
   .week-header { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px; background: #111; font-size: 10px; font-weight: 700; color: #333; letter-spacing: 2px; text-transform: uppercase; }
   .week-badge { background: #161616; border: 1px solid #252525; padding: 2px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; }
-
-  /* Days grid */
   .days-grid { display: grid; gap: 1px; background: #0f0f0f; }
-  .day-cell {
-    background: #111; padding: 12px 4px 10px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 5px; cursor: pointer; min-height: 72px;
-    transition: filter 0.15s, background 0.2s;
-    user-select: none; -webkit-user-select: none;
-  }
+  .day-cell { background: #111; padding: 12px 4px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; min-height: 72px; transition: filter 0.15s, background 0.2s; user-select: none; -webkit-user-select: none; }
   .day-cell:active { filter: brightness(1.4); }
   .day-dow { font-size: 8px; font-weight: 700; letter-spacing: 1px; }
   .day-num { font-size: 17px; font-weight: 800; line-height: 1; }
   .day-rating { font-size: 7px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; min-height: 8px; }
   .day-dot { width: 5px; height: 5px; border-radius: 50%; transition: all 0.2s; }
-
-  /* Summary */
   .summary-card { margin-top: 16px; background: #111; border: 1px solid #1e1e1e; border-radius: 16px; padding: 20px; }
   .summary-title { font-size: 10px; font-weight: 700; color: #333; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
   .summary-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
@@ -96,29 +58,28 @@
 </head>
 <body>
 <div id="app"></div>
-
 <script>
+// Mon=0, Tue=1, Wed=2, Thu=3, Fri=4, Sat=5, Sun=6
 const MONTHS = [
-  { name: "January",   days: 31, startDay: 4 },
-  { name: "February",  days: 28, startDay: 0 },
-  { name: "March",     days: 31, startDay: 0 },
-  { name: "April",     days: 30, startDay: 3 },
-  { name: "May",       days: 31, startDay: 5 },
-  { name: "June",      days: 30, startDay: 1 },
-  { name: "July",      days: 31, startDay: 3 },
-  { name: "August",    days: 31, startDay: 6 },
-  { name: "September", days: 30, startDay: 2 },
-  { name: "October",   days: 31, startDay: 4 },
-  { name: "November",  days: 30, startDay: 0 },
-  { name: "December",  days: 31, startDay: 2 },
+  { name: "January",   days: 31, startDay: 3 },
+  { name: "February",  days: 28, startDay: 6 },
+  { name: "March",     days: 31, startDay: 6 },
+  { name: "April",     days: 30, startDay: 2 },
+  { name: "May",       days: 31, startDay: 4 },
+  { name: "June",      days: 30, startDay: 0 },
+  { name: "July",      days: 31, startDay: 2 },
+  { name: "August",    days: 31, startDay: 5 },
+  { name: "September", days: 30, startDay: 1 },
+  { name: "October",   days: 31, startDay: 3 },
+  { name: "November",  days: 30, startDay: 6 },
+  { name: "December",  days: 31, startDay: 1 },
 ];
-const DAY_NAMES = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+const DAY_NAMES = ["MON","TUE","WED","THU","FRI","SAT","SUN"];
 const RATINGS   = ["","GOATED","GOOD","OKAY","MID","BAD"];
 const COLORS = {
   dot:  ["#222","#8b00ff","#39ff14","#00bfff","#ffff00","#ff2400"],
   bg:   ["#111","#1a003a","#0a1f00","#00111f","#1f1d00","#1f0400"],
   glow: ["none","0 0 18px #8b00ffaa","0 0 18px #39ff14aa","0 0 18px #00bfffaa","0 0 18px #ffff00aa","0 0 18px #ff2400aa"],
-  border: ["#222","#8b00ff33","#39ff1433","#00bfff33","#ffff0033","#ff240033"],
 };
 
 const ALL_DAYS = [];
@@ -145,6 +106,7 @@ function getWeeks(mi) {
   for (let d = 1; d <= days; d++) {
     week.push({ day: d, dow });
     dow = (dow + 1) % 7;
+    // week ends after Sunday (index 6)
     if (dow === 0 || d === days) { weeks.push(week); week = []; }
   }
   return weeks;
@@ -180,7 +142,6 @@ function render() {
   });
   const pct = (totalRated / 365 * 100).toFixed(1);
 
-  // Header
   const header = el('div', { className: 'header' },
     el('div', { className: 'title' }, '2026'),
     el('div', { className: 'subtitle' }, 'Day Tracker'),
@@ -202,7 +163,6 @@ function render() {
   );
   app.appendChild(header);
 
-  // Stats
   const statsRow = el('div', { className: 'stats-row' },
     ...RATINGS.slice(1).map((r, i) => el('div', {
       className: 'stat-box',
@@ -214,7 +174,6 @@ function render() {
   );
   app.appendChild(statsRow);
 
-  // Dot map
   const dotMap = el('div', { className: 'dot-map' },
     ...ALL_DAYS.map(({ month, day }) => {
       const s = getS(month, day);
@@ -226,7 +185,6 @@ function render() {
   );
   app.appendChild(dotMap);
 
-  // Months
   for (let mi = 0; mi < MONTHS.length; mi++) {
     const m = MONTHS[mi];
     const weeks = getWeeks(mi);
@@ -242,7 +200,6 @@ function render() {
       )
     );
 
-    // Weeks
     weeks.forEach((week, wi) => {
       const weekRated = week.filter(({day}) => getS(mi,day) > 0).length;
       const wn = wNum + wi;
@@ -278,7 +235,6 @@ function render() {
       monthEl.appendChild(weekEl);
     });
 
-    // Monthly summary
     const summaryGrid = el('div', { className: 'summary-grid' },
       ...RATINGS.slice(1).map((r, i) => {
         const cnt = monthCounts[i+1];
